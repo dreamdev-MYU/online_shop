@@ -8,8 +8,7 @@ from django.views.generic import UpdateView
 from django.urls import reverse_lazy
 
 
-def index(request):
-    return render(request, 'users/index.html')
+
 
 def login_page(request):
     if request.method == 'POST':
@@ -21,7 +20,7 @@ def login_page(request):
 
             if user is not None:
                 login(request, user)
-                return HttpResponseRedirect(reverse('index'))
+                return HttpResponseRedirect(reverse('product:index'))
     form = LoginForm()
     data = {
         'form':form
@@ -46,7 +45,7 @@ def register_page(request):
                 user.save()
                 return HttpResponseRedirect(reverse('login_page'))
             except:
-                return HttpResponseRedirect(reverse('index'))
+                return HttpResponseRedirect(reverse('product:index'))
 
 
 
@@ -66,4 +65,4 @@ class ProfileView(UpdateView):
         return self.request.user
     
     def get_success_url(self) -> str:
-        return reverse_lazy('index')
+        return reverse_lazy('product:index')

@@ -1,4 +1,4 @@
-
+from.models import Product
 class Cart:
 
     def __init__(self,request):
@@ -11,16 +11,37 @@ class Cart:
 
         self.cart=cart
 
-    def add(self,product):
-        product_id=str(product.id)
+    def add(self,product,quantity):
+        product_id=str(product)
 
         if product_id in self.cart:
             pass
         else:
-            self.cart[product_id]=str(product.price)
+            self.cart[product_id]=str(quantity)
 
 
         self.session.modified=True
 
     def __len__(self):
         return len(self.cart)
+    
+    def get_products(self):
+        product_ids = self.cart.keys()
+        products = Product.objects.filter(id__in = product_ids)
+        return products
+    
+    def get_quantity(self):
+        quantity = self.cart
+        return quantity
+    
+    def get_total_price(self):
+        product_ids = self.cart.keys()
+        products = Product.objects.filter(id__in=product_ids)
+        total = 0
+
+        for key,value in self.cart.items():
+            key=int(key)
+            for prod in products:
+                if prod.id ==key:
+                    total = total+(prod.price*int(value)) 
+            return total

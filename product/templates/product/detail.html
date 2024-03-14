@@ -15,7 +15,7 @@
                         <p class="lead">{{product.description}}</p>
                         <div class="d-flex">
                             <input class="form-control text-center me-3" id="inputQuantity" type="num" value="1" style="max-width: 3rem" />
-                            <button class="btn btn-outline-dark flex-shrink-0" id='add-cart' value="{{product.id}}" type="button">
+                            <button class="btn btn-outline-dark flex-shrink-0"  value="{{product.id}}" id='add-cart' type="button">
                                 <i class="bi-cart-fill me-1"></i>
                                 Add to cart
                             </button>
@@ -28,22 +28,20 @@
         <script>
             $(document).on('click','#add-cart',function (e){
                 e.preventDefault();
-                $.ajax(
-                   { 
+                $.ajax({
                     type:'POST',
                     url:"{% url 'product:cart_add' %}",
                     data:{
-                        product_id: $(this).val(),
+                        product_id: $('#add-cart').val(),  // Corrected selector
+                        product_quantity: $('#inputQuantity').val(),  // Corrected selector
                         csrfmiddlewaretoken:'{{csrf_token}}',
                         action:'post'
                     },
                     success: function(json){
-                       console.log(json)
+                       console.log(json);
                        location.reload();
                     }
-                }
-        
-                )
-            })
+                });
+            });
          </script>
 {% endblock content %}

@@ -51,3 +51,6 @@ class ProfileForm(forms.ModelForm):
             'email': forms.EmailInput(attrs={"class": "form-control"}),
         }
     
+
+
+    

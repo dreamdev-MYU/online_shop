@@ -34,6 +34,7 @@
                         {% if user.is_authenticated %}
                         <li class="nav-item"><a class="nav-link" href="{% url 'profile' %}">{{user.username}}</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'logout_page' %}">Log out</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'product:my_orders' %}">Buyurtmalarim</a></li>
 
                         {% else %}
 

@@ -4,6 +4,23 @@
     }
     }
     
+
+
+
+
+
+    .cart_delete {
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+      }
+      
+      .cart_delete img {
+        width: 24px; /* Ikon o'lchami */
+        height: 24px; /* Ikon o'lchami */
+      }
+      
     .card-registration .select-input.form-control[readonly]:not([disabled]) {
     font-size: 1rem;
     line-height: 2.15;

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>Buyurtmalarim</h1>
+    <table class="table">
+        <thead>
+            <tr>
+              
+                <th>Nomi</th>
+                <th>Narxi</th>
+                <th>soni</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            {% for item in order.orderitem_set.all %}
+            <tr>
+                
+                <td>{{ item.name }}</td>
+                <td>{{ item.price }}</td>
+                <td>{{ item.quantity }}</td>
+            </tr>
+            {% endfor %}
+            {% empty %}
+            <tr>
+                <td colspan="3">No orders available</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,47 +1,96 @@
-from django.shortcuts import get_object_or_404,render
-from .models import Product, Category
-from django.views.generic import ListView, DetailView
+import uuid
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.views.generic import ListView,DetailView
+from .models import Product,Category,Order,OrderItem
 from django.http import HttpResponse,JsonResponse
 from .cart import Cart
+from django.views import View
+from django.core.exceptions import ValidationError
+
+
+def my_orders(request):
+    if request.user.is_authenticated:
+        orders = Order.objects.filter(user=request.user)
+        return render(request, 'product/my_orders.html', {'orders': orders})
+    else:
+        
+        return render(request, 'product/my_orders.html', {'orders': None})  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def about(request):
+    return render(request, 'about.html')
 
 def cart_summary(request):
+
     cart = Cart(request)
+
     products = cart.get_products()
     quantity = cart.get_quantity()
     total = cart.get_total_price()
-    
+
+    all_orders = cart.get_all_info()
+
     data = {
         "products":products,
         "quantities":quantity,
+        'total':total,
+        "all_orders":all_orders
     }
 
 
     return render(request, 'product/cart_summary.html',context=data)
 
 def cart_add(request):
+
     cart = Cart(request)
 
-    
 
-    if request.method == 'POST' and request.POST.get('action') == 'post':
+    if request.POST.get('action') == 'post':
         product_id = int(request.POST.get('product_id'))
-        quantity = int(request.POST.get('product_quantity', 1))    
-        
+        quantity = request.POST.get('product_quantity')
+
+        product = get_object_or_404(Product,id=product_id)
+
+        cart.add(product=product,quantity=quantity)
+
+        return JsonResponse({"product_id":product_id})
+    return HttpResponse("Hello world")
+
+def cart_update(request):
+
+    cart = Cart(request)
+
+    if request.POST.get('action') == 'post':
+        product_id = int(request.POST.get('product_id'))
+        quantity = request.POST.get('product_quantity')
         product = get_object_or_404(Product, id=product_id)
-        cart.add(product=product, quantity=quantity)
 
-        return JsonResponse({"product_id": product_id})
+        cart.product_update(product,quantity)
 
-    return HttpResponse('Invalid Request')
+    return JsonResponse({"status":"Hello world"})
+
 
 
 def cart_delete(request):
-    return HttpResponse("hi there")
-def cart_update(request):
-    return HttpResponse("hi there")
+    cart = Cart(request)
 
-def about(request):
-    return render(request, 'product/about.html')
+    if request.POST.get('action') == 'post':
+        product_id = request.POST.get('product_id')
+        cart.delete_product(product_id)
+        return JsonResponse({"status":"salom"})
 
 
 
@@ -51,22 +100,58 @@ class ProductListView(ListView):
     context_object_name = 'products'
 
 
+
 class CategoryProductsList(DetailView):
     model = Category
-    template_name = 'product/index.html'
-    context_object_name = 'category'
+    template_name = 'product/categories.html'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        category = self.get_object()
-        context['products'] = category.products.all()
+    context_object_name = 'mahsulotlar'
+
+    def get_context_data(self,*args, **kwargs):
+        context = super(CategoryProductsList,self).get_context_data(*args, **kwargs)
+        category = context['mahsulotlar']
+        context['mahsulotlar'] = category.products.all()
+
         return context
-    
 
 
-class  ProductDetailView(DetailView):
-    model=Product
-    template_name='product/detail.html'
-    context_object_name='product'
+class ProductDetailView(DetailView):
+    model = Product
+    template_name = 'product/detail.html'
+    context_object_name = 'product'
 
 
+
+
+class OrderView(View):
+
+    def post(self,request):
+        cart = Cart(request)
+
+        all_orders = cart.get_all_info()
+        total = cart.get_total_price()
+
+
+
+        order = Order()
+        order.order_id = uuid.uuid4()
+        order.total_price = total
+        order.user = request.user
+        order.save()
+
+        try:
+            for item_data in all_orders:
+                order_item = OrderItem()
+                order_item.order = order
+                order_item.product_id = item_data['id']
+                order_item.price = item_data['price']
+                order_item.name = item_data['name']
+                order_item.quantity = item_data['quantity']
+                order_item.save()
+
+        except:
+            raise ValidationError("OrderItem modeliga saqlashdagi xatolik")
+
+        cart.clear_cart()
+
+        return redirect('product:index')

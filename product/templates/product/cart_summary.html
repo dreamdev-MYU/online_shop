@@ -2,7 +2,6 @@
 
 {% block content %}
 
-
 <section class="h-100 h-custom" style="background-color: #d2c9ff;">
     <div class="container py-5 h-100">
       <div class="row d-flex justify-content-center align-items-center h-100">
@@ -14,13 +13,33 @@
                   <div class="p-5">
                     <div class="d-flex justify-content-between align-items-center mb-5">
                       <h1 class="fw-bold mb-0 text-black">Shopping Cart</h1>
-                      <h6 class="mb-0 text-muted">3 items</h6>
+                     
                     </div>
+                    <div class="col-md-2 col-lg-2 col-xl-2">
+                      <style>
+                        .flex-container {
+                          display: flex;
+                        }
+                        .flex-item {
+                          margin-left:70px;
+                          margin-right: 100px; 
 
-
+                        }
+                      </style>
+                      
+                      <ul class="flex-container">
+                        <li class="flex-item">nomi</li>
+                        <li class="flex-item">soni</li>
+                        <li class="flex-item">narxi</li>
+                       
+                      </ul>
+                      
+                    </div>
+                           
                             {% for prod in products %}
                                 {% for key,val in quantities.items %}
                                     {% if prod.id|slugify == key %}
+                            
                                     <hr class="my-4">
                                     <div class="row mb-4 d-flex justify-content-between align-items-center">
                                     <div class="col-md-2 col-lg-2 col-xl-2">
@@ -28,7 +47,7 @@
                                         class="img-fluid rounded-3" alt="Cotton T-shirt">
                                     </div>
                                     <div class="col-md-3 col-lg-3 col-xl-3">
-                                        <h6 class="text-muted">{{prod.name}}</h6>
+                                        
                                         <h6 class="text-black mb-0">{{prod.name}}</h6>
                                     </div>
                                     <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
@@ -37,7 +56,7 @@
                                         <i class="fas fa-minus"></i>
                                         </button>
                 
-                                        <input id="form1" min="0" name="quantity" value="{{val}}" type="number"
+                                        <input id="form1" min="1" name="quantity" value="{{val}}" type="number"
                                         class="form-control form-control-sm" />
                 
                                         <button class="btn btn-link px-2"
@@ -46,10 +65,20 @@
                                         </button>
                                     </div>
                                     <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
-                                        <h6 class="mb-0">{{prod.price}}</h6>
-                                    </div>
+                                      <h6 class="mb-0">{{ prod.price }}</h6>  
+                                  </div>
+                                  
+                                  
                                     <div class="col-md-1 col-lg-1 col-xl-1 text-end">
                                         <a href="#!" class="text-muted"><i class="fas fa-times"></i></a>
+
+                                        <div class="card-body" >
+                                        
+
+                      
+                                            <a href="#" class="btn btn-outline-danger mt-5"  id="delete_product" data-index="{{prod.id}}" >Delete</a>
+                      
+                                        </div>
                                     </div>
                                     </div>
                                 <hr class="my-4">
@@ -58,7 +87,7 @@
                             {% endfor %}
   
                     <div class="pt-5">
-                      <h6 class="mb-0"><a href="#!" class="text-body"><i
+                      <h6 class="mb-0"><a href="{% url 'product:index' %}" class="text-body"><i
                             class="fas fa-long-arrow-alt-left me-2"></i>Back to shop</a></h6>
                     </div>
                   </div>
@@ -67,42 +96,17 @@
                   <div class="p-5">
                     <h3 class="fw-bold mb-5 mt-2 pt-1">Summary</h3>
                     <hr class="my-4">
-  
-                    <div class="d-flex justify-content-between mb-4">
-                      <h5 class="text-uppercase">items 3</h5>
-                      <h5>€ 132.00</h5>
-                    </div>
-  
-                    <h5 class="text-uppercase mb-3">Shipping</h5>
-  
-                    <div class="mb-4 pb-2">
-                      <select class="select">
-                        <option value="1">Standard-Delivery- €5.00</option>
-                        <option value="2">Two</option>
-                        <option value="3">Three</option>
-                        <option value="4">Four</option>
-                      </select>
-                    </div>
-  
-                    <h5 class="text-uppercase mb-3">Give code</h5>
-  
-                    <div class="mb-5">
-                      <div class="form-outline">
-                        <input type="text" id="form3Examplea2" class="form-control form-control-lg" />
-                        <label class="form-label" for="form3Examplea2">Enter your code</label>
-                      </div>
-                    </div>
+
   
                     <hr class="my-4">
   
                     <div class="d-flex justify-content-between mb-5">
                       <h5 class="text-uppercase">Total price</h5>
-                      <h5>€ 137.00</h5>
+                      <h5><h5>€ {{ cart.get_total_price }}</h5></h5>
                     </div>
   
-                    <button type="button" class="btn btn-dark btn-block btn-lg"
-                      data-mdb-ripple-color="dark">Register</button>
-  
+                    <h3 class="mt-5 text-center">Total: ${{total}} &nbsp; <a href="#"  data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn btn-outline-warning fs-5 p-2">Buyurtma</a>  </h3>
+
                   </div>
                 </div>
               </div>
@@ -112,6 +116,113 @@
       </div>
     </div>
   </section>
-    
-          
-{% endblock content %}
+
+
+</div>
+</div>
+
+</section>
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<h1 class="modal-title fs-5" id="exampleModalLabel">Siz shu mahsulotlarni haqiqatdan ham zakaz bermoqchimisiz?</h1>
+<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+  <table class="table">
+<thead>
+<tr>
+<th scope="col">Id</th>
+<th scope="col">Name</th>
+<th scope="col">Price</th>
+<th scope="col">Quantity</th>
+</tr>
+</thead>
+<tbody>
+
+{% for order in all_orders %}
+<tr>
+<th scope="row">{{order.id}}</th>
+<td>{{order.name}}</td>
+<td>{{order.price}}</td>
+<td>{{order.quantity}}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+</div>
+<div class="modal-footer">
+<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+  {% if user.is_authenticated %}
+<form method="post" action="{% url 'product:order' %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-success">Ha tasdiqlayman</button>
+</form>
+  {% else %}
+  <form method="post" action="{% url 'login_page' %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-success">Ha tasdiqlayman</button>
+</form>
+  {% endif %}
+</div>
+</div>
+</div>
+</div>
+
+
+
+<script>
+
+// #delete uchun script
+
+$(document).on('click', '#delete_product',function(e){
+e.preventDefault();
+$.ajax({
+    type:'POST',
+    url:"{% url 'product:cart_delete' %}",
+    data:{
+        product_id: $(this).data('index'),
+        csrfmiddlewaretoken: '{{ csrf_token }}',
+        action:'post'
+    },
+    success: function(json){
+        console.log(json)
+        location.reload()
+    }
+})
+})
+
+// update uchun script
+
+$(document).on('click', '#update-cart',function(e){
+e.preventDefault();
+$.ajax({
+    type:'POST',
+    url:"{% url 'product:cart_update' %}",
+    data:{
+        product_id: $(this).data('index'),
+        product_quantity: $('#inputQuantity').val(),
+        csrfmiddlewaretoken: '{{ csrf_token }}',
+        action:'post'
+    },
+    success: function(json){
+        console.log(json)
+        location.reload()
+    }
+})
+})
+
+
+
+
+
+</script>
+
+
+
+{% endblock %}

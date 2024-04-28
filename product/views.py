@@ -1,5 +1,4 @@
 import uuid
-
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView,DetailView
 from .models import Product,Category,Order,OrderItem
@@ -8,30 +7,18 @@ from .cart import Cart
 from django.views import View
 from django.core.exceptions import ValidationError
 
-
 def my_orders(request):
     if request.user.is_authenticated:
         orders = Order.objects.filter(user=request.user)
         return render(request, 'product/my_orders.html', {'orders': orders})
     else:
-        
+      
         return render(request, 'product/my_orders.html', {'orders': None})  
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 def about(request):
-    return render(request, 'about.html')
+    return render(request, 'product/about.html')
 
 def cart_summary(request):
 
@@ -56,7 +43,6 @@ def cart_summary(request):
 def cart_add(request):
 
     cart = Cart(request)
-
 
     if request.POST.get('action') == 'post':
         product_id = int(request.POST.get('product_id'))
@@ -83,7 +69,6 @@ def cart_update(request):
     return JsonResponse({"status":"Hello world"})
 
 
-
 def cart_delete(request):
     cart = Cart(request)
 
@@ -98,7 +83,6 @@ class ProductListView(ListView):
     model = Product
     template_name = 'product/index.html'
     context_object_name = 'products'
-
 
 
 class CategoryProductsList(DetailView):
@@ -122,7 +106,6 @@ class ProductDetailView(DetailView):
 
 
 
-
 class OrderView(View):
 
     def post(self,request):
@@ -130,7 +113,6 @@ class OrderView(View):
 
         all_orders = cart.get_all_info()
         total = cart.get_total_price()
-
 
 
         order = Order()

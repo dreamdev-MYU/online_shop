@@ -1,31 +1,40 @@
-from telegram import Update
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
+import requests
+from telegram import Bot
+import asyncio
 
-# Token o'rniga o'z botingizning tokenini qo'yasiz
-TOKEN = "6695415590:AAFmonZAOzRDDwueLkhRPxEWEEbSzEGIIRw"
+def get_chat_id(bot_token):
+    url = f'https://api.telegram.org/bot{bot_token}/getUpdates'
+    response = requests.get(url)
 
-def start(update: Update, context: CallbackContext) -> None:
-    update.message.reply_text("""Assalomu alaykum! Buyurtma berish uchun /buyurtma buyrug'ini jo'nating.""")
+    if response.status_code == 200:
+        data = response.json()
+        if data['result']:
+            chat_id = data['result'][0]['message']['chat']['id']
+            return chat_id
+        else:
+            print("No updates found. Make sure you've started a conversation with your bot.")
+    else:
+        print(f"Failed to fetch updates. Status code: {response.status_code}")
 
-def buyurtma(update: Update, context: CallbackContext) -> None:
-    # Buyurtmangizni shu yerga yozing
-    buyurtma = update.message.text
-    # Buyurtmani qabul qilish va ishlash qismi
-    # Masalan, buyurtmani bazaga saqlab olish, e-mail orqali bildirish, boshqa bot bilan bog'lanish va h.k.
-    # Buyurtmani qabul qilish uchun sizning kerakli funksiyalaringizni yozing
+bot_token = '6991822427:AAGZYUkfrccur_aPfSujivqwV1NL6FtSU1o'
+chat_id = get_chat_id(bot_token)
 
-    # Buyurtmani qabul qilgandan so'ng foydalanuvchiga javob qaytarish
-    update.message.reply_text('Buyurtmangiz qabul qilindi! Tez orada siz bilan bog\'lanamiz.')
+if chat_id:
+    print(f"Your chat ID is: {chat_id}")
 
-def main() -> None:
-    updater = Updater(TOKEN)
-    dispatcher = updater.dispatcher
 
-    dispatcher.add_handler(CommandHandler("start", start))
-    dispatcher.add_handler(CommandHandler("buyurtma", buyurtma))
 
-    updater.start_polling()
-    updater.idle()
+async def send_message(bot_token, chat_id, text):
+    bot = Bot(token=bot_token)
+    await bot.send_message(chat_id=chat_id, text=text)
 
-if __name__ == '__main__':
-    main()
+async def main():
+    await send_message('6991822427:AAGZYUkfrccur_aPfSujivqwV1NL6FtSU1o', '765001726', 'Hello, Telegram!')
+
+if name == "main":
+    # Run the event loop
+    asyncio.run(main())
+
+
+#pip install requests
+# pip install python-telegram-bot
